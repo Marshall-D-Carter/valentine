@@ -8,71 +8,126 @@
 <style>
 body{
   margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#f7a1c4;
   font-family:"Comic Sans MS",cursive;
-  overflow:hidden;
 }
+
+/* APP CONTAINER */
+.app{
+  width: min(95vw, 400px);
+  height: min(95vh, 800px);
+  background:linear-gradient(#ffd1e8,#ffe6f2);
+  border-radius:40px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.25);
+  overflow:hidden;
+  position:relative;
+}
+
+/* frames */
 .frame{
   display:none;
   position:absolute;
   inset:0;
-  background:linear-gradient(#ffd1e8,#ffe6f2);
   justify-content:center;
   align-items:center;
   flex-direction:column;
 }
 .active{display:flex;}
+
 p{
-  font-size:clamp(18px,5vw,28px);
+  font-size:clamp(16px,4vw,24px);
   color:#ff2f6e;
   text-align:center;
 }
+
+/* sticker look */
 .asset{
-  filter: drop-shadow(0 12px 20px rgba(0,0,0,0.18));
+  background:white;
+  padding:10px;
+  border-radius:25px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
   animation: floaty 3s ease-in-out infinite;
 }
 @keyframes floaty{
   0%{transform:translateY(0);}
-  50%{transform:translateY(-8px);}
+  50%{transform:translateY(-6px);}
   100%{transform:translateY(0);}
 }
+
+/* reveal */
 .reveal{
-  animation:popIn 0.8s cubic-bezier(.2,1.3,.4,1);
+  animation:popIn 0.7s ease forwards;
 }
 @keyframes popIn{
-  from{transform:scale(0.3) translateY(40px); opacity:0;}
-  to{transform:scale(1) translateY(0); opacity:1;}
+  from{transform:scale(0);opacity:0;}
+  to{transform:scale(1);opacity:1;}
 }
-.big{
-  width:min(60vw,220px);
-  cursor:pointer;
-}
-.mid{
-  width:min(35vw,150px);
-  margin:12px;
-  cursor:pointer;
-}
+
+/* images */
+.big{width:min(60vw,200px);cursor:pointer;}
+.mid{width:min(35vw,140px);margin:12px;cursor:pointer;}
 .row{display:flex;}
-.plane{
+
+/* PLANES */
+.planeWrap{
   position:absolute;
   display:flex;
   align-items:center;
-  gap:10px;
-  background:#fff;
-  padding:14px 26px;
-  border-radius:40px;
-  font-size:clamp(14px,4vw,22px);
-  box-shadow:0 8px 20px rgba(0,0,0,.15);
+  cursor:pointer;
 }
-.plane img{width:36px;}
+.planeWrap img{width:60px;}
+.flag{
+  background:#ff5fa2;
+  color:white;
+  padding:8px 16px;
+  border-radius:20px;
+  margin-left:-10px;
+  font-size:clamp(12px,3.5vw,18px);
+  box-shadow:0 4px 10px rgba(0,0,0,.2);
+}
+
+/* start positions */
 .middle{left:-120%; top:50%; transform:translateY(-50%);}
 .top{top:-40%; left:50%; transform:translateX(-50%);}
 .bottom{bottom:-40%; left:50%; transform:translateX(-50%);}
-.fly-middle{animation:midFly 2s ease forwards;}
-.fly-top{animation:topFly 2s ease forwards;}
-.fly-bottom{animation:botFly 2s ease forwards;}
-@keyframes midFly{to{left:50%; transform:translate(-50%,-50%);}}
-@keyframes topFly{to{top:38%;}}
-@keyframes botFly{to{bottom:38%;}}
+
+/* entry */
+.fly-middle{animation:midIn 3s ease forwards;}
+.fly-top{animation:topIn 3s ease forwards;}
+.fly-bottom{animation:botIn 3s ease forwards;}
+
+@keyframes midIn{to{left:50%; transform:translate(-50%,-50%);}}
+@keyframes topIn{to{top:38%;}}
+@keyframes botIn{to{bottom:38%;}}
+
+/* exit */
+.exit-right{animation:exitRight 2s linear forwards;}
+.exit-down{animation:exitDown 2s linear forwards;}
+.exit-up{animation:exitUp 2s linear forwards;}
+
+@keyframes exitRight{to{left:120%;}}
+@keyframes exitDown{to{top:120%;}}
+@keyframes exitUp{to{bottom:120%;}}
+
+/* trail */
+.trail{
+  position:absolute;
+  width:16px;
+  height:16px;
+  background:#ff7ebd;
+  border-radius:50%;
+  opacity:.7;
+  animation:trailFade 1s forwards;
+}
+@keyframes trailFade{
+  to{opacity:0; transform:scale(2);}
+}
+
+/* scroll */
 .scroll{
   background:#fff0f6;
   padding:22px;
@@ -81,16 +136,15 @@ p{
   animation:popIn 1s ease forwards;
 }
 .scroll img{
-  width:min(55vw,200px);
+  width:min(55vw,180px);
   border-radius:20px;
-}
-@media(max-width:600px){
-  .frame{transform:scale(1.15);}
 }
 </style>
 </head>
 
 <body>
+
+<div class="app">
 
 <div class="frame active" id="f1">
   <img src="gift.png" class="big reveal asset" onclick="go(2)">
@@ -106,14 +160,17 @@ p{
 </div>
 
 <div class="frame" id="f3">
-  <div class="plane middle">
-    <img src="plane.png" class="asset"> Happy Valentine’s Day
+  <div class="planeWrap middle" onclick="exitPlane(this,'right')">
+    <img src="plane.png">
+    <div class="flag">Happy Valentine’s Day</div>
   </div>
-  <div class="plane top">
-    <img src="plane.png" class="asset"> I Love You
+  <div class="planeWrap top" onclick="exitPlane(this,'down')">
+    <img src="plane.png">
+    <div class="flag">I Love You</div>
   </div>
-  <div class="plane bottom">
-    <img src="plane.png" class="asset"> I Love You
+  <div class="planeWrap bottom" onclick="exitPlane(this,'up')">
+    <img src="plane.png">
+    <div class="flag">I Love You</div>
   </div>
 </div>
 
@@ -132,23 +189,46 @@ p{
   </div>
 </div>
 
+</div>
+
 <script>
 function go(n){
   document.querySelector(".active").classList.remove("active");
   const next=document.getElementById("f"+n);
   next.classList.add("active");
+
   next.querySelectorAll("img").forEach(img=>{
     img.classList.remove("reveal");
     void img.offsetWidth;
     img.classList.add("reveal");
   });
-  if(n===3){setTimeout(fly,300);}
+
+  if(n===3){setTimeout(startPlanes,300);}
 }
-function fly(){
+
+function startPlanes(){
   document.querySelector(".middle").classList.add("fly-middle");
   document.querySelector(".top").classList.add("fly-top");
   document.querySelector(".bottom").classList.add("fly-bottom");
-  setTimeout(()=>go(4),2300);
+}
+
+function exitPlane(el,dir){
+  makeTrail(el);
+  if(dir==="right") el.classList.add("exit-right");
+  if(dir==="down") el.classList.add("exit-down");
+  if(dir==="up") el.classList.add("exit-up");
+  setTimeout(()=>go(4),1800);
+}
+
+function makeTrail(el){
+  const t=document.createElement("div");
+  t.className="trail";
+  document.querySelector(".app").appendChild(t);
+  const r=el.getBoundingClientRect();
+  const a=document.querySelector(".app").getBoundingClientRect();
+  t.style.left=(r.left-a.left)+"px";
+  t.style.top=(r.top-a.top)+"px";
+  setTimeout(()=>t.remove(),1000);
 }
 </script>
 
